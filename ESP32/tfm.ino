@@ -105,27 +105,33 @@ void loop() {
   char *msg_log = "";
   char *msg;
   size_t len;
+  int lenLora;
+  String msgLoraStr;
+  char *msgLora;
+  int rssi;
   
   if (client) {
     Serial.println("[WIFI] Client connected!");
-
+    printLcd("CONECTADO!",2);
     /*Mientras el cliente esté conectado*/
     while (client.connected()) {
+      
+    
       printLcd("CONECTADO!",2,false);
       len= client.available();
+      lenLora = LoRa.parsePacket();
+      
       if (len!=0) {//Msg recibido por WIFI
-        //msg = malloc(sizeof(*char)*len);
         msg = new char[len+1];
                
-        Serial.println(len);
         client.readBytes(msg, len);
         //msg_log = strcat("[TCP][IN] Message: ",  msg);
         //Serial.println(msg_log);
+        Serial.println("[TCP][IN] Mensaje:");
         Serial.print(msg);
        
         printLcd("[TCP] Recibido: ",1,true,0,30);
         printLcd(msg,1,false,0,40);
-        //printLcd(msg_log);
         
         //Send LoRa packet to receiver
         LoRa.beginPacket();
@@ -135,8 +141,25 @@ void loop() {
         client.write(msg,len);
         delete[] msg;
 
-      //free(msg);
       }//Fin if mensaje recibido
+      if (lenLora!=0) {//Msg recibido por LORA
+        Serial.println("[LORA][IN] Mensaje:");
+
+        while (LoRa.available()) {
+          msgLoraStr = LoRa.readString();
+          Serial.print(msgLoraStr);
+        }
+
+        rssi = LoRa.packetRssi();
+        Serial.print(" with RSSI ");    
+        Serial.println(rssi);
+        msgLora = const_cast<char*>(msgLoraStr.c_str());
+
+        printLcd("[LORA] Recibido: ",1,true,0,30);
+        printLcd(msgLora,1,false,0,40);
+      }
+
+      
     }//Fin while cliente conectado
     client.stop(); // close the connection
     Serial.println("[WIFI] Client Disconnected.");
