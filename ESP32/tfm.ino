@@ -4,6 +4,10 @@
 #include <WiFiClient.h>
 #include <WiFiAP.h>
 
+//Libraries for LoRa
+#include <SPI.h>
+#include <LoRa.h>
+
 //Libraries for OLED Display
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -15,6 +19,15 @@
 #define OLED_RST 16
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
+//LoRa pins
+#define SCK 5
+#define MISO 19
+#define MOSI 27
+#define SS 18
+#define RST 14
+#define DIO0 26
+
+#define BAND 866E6
 
 // Set these to your desired credentials.
 const char *ssid = "AP";
@@ -31,6 +44,7 @@ void setup() {
   // put your setup code here, to run once:
   setup_Serial();
   setup_Display();
+  setup_Lora();
   setup_Wifi();
   //printLcd("RUNING");
 }
@@ -71,6 +85,18 @@ void setup_Wifi() {
   Serial.println("[WIFI] Wifi Access Point started!");
 }
 
+void setup_Lora() {
+  //SPI LoRa pins
+  SPI.begin(SCK, MISO, MOSI, SS);
+  //setup LoRa transceiver module
+  LoRa.setPins(SS, RST, DIO0);
+  
+  if (!LoRa.begin(BAND)) {
+    Serial.println("[LORA] Starting failed!");
+    while (1);
+  }
+  Serial.println("[LORA] Initializing OK!");
+}
 
 void loop() {
   // put your main code here, to run repeatedly:
@@ -85,18 +111,27 @@ void loop() {
 
     /*Mientras el cliente esté conectado*/
     while (client.connected()) {
-      printLcd("CONECTADO!",2);
+      printLcd("CONECTADO!",2,false);
       len= client.available();
-      if (len!=0) {//Msg recibido
+      if (len!=0) {//Msg recibido por WIFI
         //msg = malloc(sizeof(*char)*len);
-        msg = new char[len];
+        msg = new char[len+1];
                
-        Serial.println("len"+len);
+        Serial.println(len);
         client.readBytes(msg, len);
         //msg_log = strcat("[TCP][IN] Message: ",  msg);
         //Serial.println(msg_log);
-        Serial.println(msg);
+        Serial.print(msg);
+       
+        printLcd("[TCP] Recibido: ",1,true,0,30);
+        printLcd(msg,1,false,0,40);
         //printLcd(msg_log);
+        
+        //Send LoRa packet to receiver
+        LoRa.beginPacket();
+        LoRa.print(msg);
+        LoRa.endPacket();
+        
         client.write(msg,len);
         delete[] msg;
 
