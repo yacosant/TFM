@@ -118,8 +118,8 @@ void loop() {
       
     
       printLcd("CONECTADO!",2,false);
-      len= client.available();
       lenLora = LoRa.parsePacket();
+      len= client.available();
       
       if (len!=0) {//Msg recibido por WIFI
         msg = new char[len+1];
@@ -157,6 +157,8 @@ void loop() {
 
         printLcd("[LORA] Recibido: ",1,true,0,30);
         printLcd(msgLora,1,false,0,40);
+
+        client.print(msgLora);
       }
 
       
