@@ -1,12 +1,19 @@
 #include <splash.h>
 
+//incluye mis utilidades
+#include "Utils.h"
+
 #include <WiFi.h>
+
 #include <WiFiClient.h>
 #include <WiFiAP.h>
 
 //Libraries for LoRa
 #include <SPI.h>
 #include <LoRa.h>
+
+//Json
+#include <ArduinoJson.h>
 
 //Libraries for OLED Display
 #include <Wire.h>
@@ -29,12 +36,15 @@ QRCode qrcode;                  // Create the QR code
 #define RST 14
 #define DIO0 26
 
+#define jsonFlag 1
+
 #define BAND 866E6
 
 // Set these to your desired credentials.
 const char *ssid = "AP";
 const char *password = "yaco123456789";
-
+String qr="";
+String userName = "yaco";
 
 const int QRcode_Version = 3;   //  set the version (range 1->40)
 const int QRcode_ECC = 0;       //  set the Error Correction level (range 0-3) or symbolic (ECC_LOW, ECC_MEDIUM, ECC_QUARTILE and ECC_HIGH)
@@ -50,6 +60,8 @@ void printLcd(char* text, int size=2, bool clear=true, int x=0, int y=0);
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
 
 WiFiServer server(80,1);
+
+Mensaje msgObj;
 
 void setup() {
   // put your setup code here, to run once:
@@ -144,7 +156,13 @@ void loop() {
         //Serial.println(msg_log);
         Serial.println("[TCP][IN] Mensaje:");
         Serial.print(msg);
-       
+       if(jsonFlag)
+        deserializeObject(String(msg));
+        if(msgObj.getOp() == 1)
+          Serial.println("MSG de configuracion");
+         else if(msgObj.getOp() == 0){
+          Serial.println("MSG de msg");
+         }
         printLcd("[TCP] Recibido: ",1,true,0,30);
         printLcd(msg,1,false,0,40);
         
@@ -164,7 +182,13 @@ void loop() {
           msgLoraStr = LoRa.readString();
           Serial.print(msgLoraStr.c_str());
         }
-
+        
+        //Deserializar y si es para mi, lo pinto y reenvio al dispositivo
+        if(jsonFlag)
+          deserializeObject(msgLoraStr);
+          if(msgObj.getDestino() == userName)
+            Serial.println("Es para ti este mensaje");
+        //---------------------
         rssi = LoRa.packetRssi();
         Serial.print(" with RSSI ");    
         Serial.println(rssi);
@@ -181,11 +205,10 @@ void loop() {
     }//Fin while cliente conectado
     client.stop(); // close the connection
     Serial.println("[WIFI] Client Disconnected.");
-    printLcd("DESCONECTADO :(",2);
+    printLcd("DESCONECTADO",2);
   }
 
 }
-
 
 void printLcd(char* text, int size, bool clear, int x, int y) {
   if(clear)
@@ -200,11 +223,13 @@ void printLcd(char* text, int size, bool clear, int x, int y) {
 void drawQR(){
   display.clearDisplay();
   display.setCursor(0,0);
-  qrcode_initText(&qrcode, qrcodeData, QRcode_Version, QRcode_ECC, "https://github.com/");
-  Serial.print("in");
-Serial.print( qrcode.size);
+  String s= ssid;
+  String p= password;
+  qr="WIFI:S:"+s+";T:WPA;P:"+p+";;";
+  
+  qrcode_initText(&qrcode, qrcodeData, QRcode_Version, QRcode_ECC, qr.c_str());
   uint16_t x0 = 0;
-  uint16_t y0 =  0;   //
+  uint16_t y0 = 0;
 
   uint16_t xx;
   uint16_t yy;
@@ -237,6 +262,13 @@ Serial.print( qrcode.size);
     }
   }
   display.display(); 
-  Serial.print("out");
 
+}
+
+void deserializeObject(String json){
+    //json = "{\"op\":0,\"o\":\"yaco\",\"d\":\"destino1\",\"msg\":\"mensajePrueba\"}";
+    StaticJsonDocument<300> doc;
+    DeserializationError error = deserializeJson(doc, json);
+    if (error) { return; }
+    msgObj.parse(doc);  
 }
