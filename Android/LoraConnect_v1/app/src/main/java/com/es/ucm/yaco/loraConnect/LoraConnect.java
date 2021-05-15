@@ -30,10 +30,14 @@ public class LoraConnect {
         if(controllerChat == null)
             controllerChat = new ControllerChat();
     }
-
+    /**
+     * Proceso que se inicia para realizar y gestionar la conexión con la ESP32
+     * @param listener del tipo OnMessageReceived que hay que definir en el Activity para que se le notifiquen las llegadas de mensajes.
+     */
     public static void connectToESP32(OnMessageReceived listener){
         if(controllerTCP == null)
             controllerTCP = new TcpClient(listener);
+        controllerTCP.run();
     }
 
     //Config ---------------------------------------------------------------------------------------
