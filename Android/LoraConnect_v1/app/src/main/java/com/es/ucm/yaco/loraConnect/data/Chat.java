@@ -7,7 +7,7 @@ public class Chat {
     private String destination;
     private ArrayList<Message> msgs;
 
-    Chat(String dest){
+    public Chat(String dest){
         destination = dest;
         msgs = new ArrayList<Message>();
     }

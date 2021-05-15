@@ -1,5 +1,6 @@
 package com.es.ucm.yaco.loraConnect.data;
 
+import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
 
 import org.json.JSONException;
@@ -15,9 +16,16 @@ public class Message {
     private boolean check;
     private Date timestamp;
 
-    Message(){
+    public Message(){
         check = false;
         this.timestamp = new Date();
+        this.source = ControllerConfig.getUsername();
+    }
+
+    public void configMessage(String config) {
+        Message m = new Message();
+        m.setMsg(config);
+        m.setType(Constants.TYPE_MSG_CONFIG);
     }
 
     public short getType() {
@@ -32,7 +40,7 @@ public class Message {
         return source;
     }
 
-    public void setSource(String source) {
+    private void setSource(String source) {
         this.source = source;
     }
 

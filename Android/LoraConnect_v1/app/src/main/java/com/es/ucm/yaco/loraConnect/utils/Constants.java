@@ -17,4 +17,7 @@ public final class Constants {
     public static final short TYPE_MSG_BYE = 4;
     public static final short TYPE_MSG_GET_CONNECTED = 5;
 
+    public static final String TCP_SERVER_IP = "192.168.4.1";
+    public static final int TCP_SERVER_PORT = 80;
+
 }
