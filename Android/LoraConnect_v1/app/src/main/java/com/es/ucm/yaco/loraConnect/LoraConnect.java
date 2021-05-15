@@ -81,6 +81,14 @@ public class LoraConnect {
         controllerChat.addMsg(m);
     }
 
+    /**
+     * Recupera lista de usuarios conectados
+     * @return ArrayList<String> lista de usuarios
+     */
+    public static ArrayList<String> getConnected(){
+        return controllerTCP.getUsersConnected();
+    }
+
     //Declare the interface. The method messageReceived(String message) will must be implemented in the MyActivity
     //class at on asynckTask doInBackground
     public interface OnMessageReceived {

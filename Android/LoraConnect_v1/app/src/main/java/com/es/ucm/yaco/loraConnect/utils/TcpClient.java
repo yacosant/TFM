@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class TcpClient {
 
@@ -21,6 +22,7 @@ public class TcpClient {
     private boolean connected = false;
     private String msg_string;
     private Message msg;
+    private ArrayList<String> usersConnected;
 
     public TcpClient(LoraConnect.OnMessageReceived listener) {
         mMessageListener = listener;
@@ -86,10 +88,36 @@ public class TcpClient {
                     msg_string = mBufferIn.readLine();
 
                     if (msg_string != null && mMessageListener != null) {
+                        Log.d("TCP", "MSG recibido: "+msg_string);
                         msg = new Message();
                         msg.parse(msg_string);
-                        //Se notifica a la Activity que se ha recibido un mensaje
-                        mMessageListener.messageReceived(msg);
+
+                        if(msg.getType()==Constants.TYPE_MSG_HELLO || msg.getType()==Constants.TYPE_MSG_HELLO_ACK) {
+                            if (!usersConnected.contains(msg.getSource())){
+                                usersConnected.add(msg.getSource());
+                                Log.d("TCP", "Usuario añadido " + msg.getSource());
+                            }
+                            Log.d("TCP", "Lista: " + usersConnected.toString());
+                        }
+
+                        if(msg.getType()==Constants.TYPE_MSG_HELLO){ //Se responde al usuario que estamos en linea
+                            String d = msg.getDestination();
+                            msg = new Message();
+                            msg.setType(Constants.TYPE_MSG_HELLO);
+                            msg.setDestination(d);
+                            send(msg.toJson());
+                        }
+                        else if(msg.getType()== Constants.TYPE_MSG_BYE){
+                            if(usersConnected.remove(msg.getSource()))
+                                Log.d("TCP", "Usuario borrado "+msg.getSource());
+                            else
+                                Log.d("TCP", "Usuario "+msg.getSource()+ " NO borrado");
+                            Log.d("TCP", "Lista: "+usersConnected.toString());
+                        }
+                        else if(msg.getType()== Constants.TYPE_MSG_MSG){
+                            //Se notifica a la Activity que se ha recibido un mensaje
+                            mMessageListener.messageReceived(msg);
+                        }
                     }
                 }
 
@@ -107,4 +135,11 @@ public class TcpClient {
 
     }
 
+    /**
+     * Recupera lista de usuarios conectados
+     * @return ArrayList<String> lista de usuarios
+     */
+    public ArrayList<String> getUsersConnected(){
+        return usersConnected;
+    }
 }

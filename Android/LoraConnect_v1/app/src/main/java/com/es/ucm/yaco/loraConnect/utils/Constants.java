@@ -12,10 +12,9 @@ public final class Constants {
 
     public static final short TYPE_MSG_MSG = 0;
     public static final short TYPE_MSG_CONFIG = 1;
-    public static final short TYPE_MSG_ACK = 2;
+    public static final short TYPE_MSG_HELLO_ACK = 2;
     public static final short TYPE_MSG_HELLO = 3;
     public static final short TYPE_MSG_BYE = 4;
-    public static final short TYPE_MSG_GET_CONNECTED = 5;
 
     public static final String TCP_SERVER_IP = "192.168.4.1";
     public static final int TCP_SERVER_PORT = 80;
