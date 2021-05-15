@@ -59,6 +59,9 @@ public class TcpClient {
         mBufferOut = null;
     }
 
+    /**
+     * Proceso que se inicia para realizar y gestionar la conexión con la ESP32
+     */
     public void run() {
 
         connected = true;
