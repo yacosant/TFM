@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.es.ucm.yaco.loraconnect_example.FirstFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_first" >
+
+        <action
+            android:id="@+id/action_FirstFragment_to_chatList"
+            app:destination="@id/chatList" />
+    </fragment>
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.es.ucm.yaco.loraconnect_example.SecondFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_second" >
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="com.es.ucm.yaco.loraconnect_example.ConfigFragment"
+        android:label="ConfigFragment" >
+        <action
+            android:id="@+id/action_configFragment_self"
+            app:destination="@id/configFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatList"
+        android:name="com.es.ucm.yaco.loraconnect_example.ChatListFragment"
+        android:label="ChatList" >
+        <action
+            android:id="@+id/action_chatList_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.es.ucm.yaco.loraconnect_example.ChatFragment"
+        android:label="ChatFragment" />
+</navigation>

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">LoraConnect_Example</string>
+    <string name="action_settings">Configuración</string>
+    <string name="action_settings_1">Desconectar</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Conectar</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Bienvenido a la POC de ejemplo de LoraConnect.</string>
+    <string name="hello_first_fragment_1">Instrucciones:</string>
+    <string name="hello_first_fragment_2">Configura un nombre de usuario si no lo tienes ya.</string>
+    <string name="hello_first_fragment_3">Comprueba que estás conectado a la ESP32.</string>
+    <string name="hello_first_fragment_4">Inicia la conexión!</string>
+
+    <string name="guardar">Guardar</string>
+
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>

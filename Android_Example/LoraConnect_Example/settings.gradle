@@ -1,0 +1,3 @@
+include ':loraConnectSDK'
+include ':app'
+rootProject.name = "LoraConnect_Example"
