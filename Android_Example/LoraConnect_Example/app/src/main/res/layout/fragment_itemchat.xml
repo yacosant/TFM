@@ -18,7 +18,7 @@
             android:layout_weight="1"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            tools:src="@drawable/online"/>
+            tools:src="android:drawable/presence_invisible"/>
 
         <LinearLayout
             android:layout_width="match_parent"

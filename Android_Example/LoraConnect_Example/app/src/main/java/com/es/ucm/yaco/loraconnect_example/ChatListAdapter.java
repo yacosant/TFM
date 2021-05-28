@@ -53,9 +53,11 @@ public class ChatListAdapter extends BaseAdapter {
         nombre.setText(list.get(position).getLastMsg().getDestination());
         msg.setText(list.get(position).getLastMsg().getMsg());
         if(list.get(position).isOnline())
-            img.setImageResource(R.drawable.online);
+            img.setImageResource(android.R.drawable.presence_online);
         else
-            img.setImageResource(R.drawable.offline);
+            img.setImageResource(android.R.drawable.presence_offline);
+
         return convertView;
     }
+
 }

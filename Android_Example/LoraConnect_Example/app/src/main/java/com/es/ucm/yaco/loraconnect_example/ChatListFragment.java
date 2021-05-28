@@ -1,6 +1,11 @@
 package com.es.ucm.yaco.loraconnect_example;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +16,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
+import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -19,47 +26,112 @@ import java.util.ArrayList;
 
 public class ChatListFragment extends Fragment {
     ListView listViewChats;
-    ArrayList<Chat> l;
+    static ArrayList<Chat> l = new ArrayList<Chat>();
+    static ChatListAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+        MainActivity.changeActiveItem(0,true); //activar la opcion Desconectar
+        MainActivity.changeActiveItem(1,false); //desactivar la opcion Configuración
+        l = MainActivity.getChatController().getChats();
+        MainActivity.setBack(false);
         View view = inflater.inflate(R.layout.fragmen_chatslist, container, false);
 
         listViewChats = (ListView)view.findViewById(R.id.listViewId);
 
-        ChatListAdapter adapter = new ChatListAdapter(getActivity().getApplicationContext(), getData());//LoraConnect.getListOfChats());
+        adapter = new ChatListAdapter(getActivity().getApplicationContext(),
+                l);
+                //getFakeData());
+
         listViewChats.setAdapter(adapter);
 
         listViewChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getActivity().getApplicationContext(),String.valueOf(position),Toast.LENGTH_SHORT).show();
-                Snackbar.make(view, String.valueOf(position), Snackbar.LENGTH_LONG)
+                /*Snackbar.make(view, String.valueOf(position), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Toast.makeText(getActivity().getApplicationContext(),String.valueOf(l.get(position).getDestination()),Toast.LENGTH_SHORT).show();
+                */
+                Bundle bundle = new Bundle();
+                bundle.putString("idChat", String.valueOf(position));
+
                 NavHostFragment.findNavController(ChatListFragment.this)
-                        .navigate(R.id.action_chatList_to_chatFragment);
+                        .navigate(R.id.action_chatList_to_chatFragment,bundle);
             }
         });
-        //return inflater.inflate(R.layout.fragmen_chatslist, container, false);
         return view;
     }
 
-    private ArrayList<Chat> getData(){
+
+    protected static ArrayList<Chat> getFakeData(){
         l= new ArrayList<Chat>();
         Chat c;
         Message m;
         for(int i=0; i<3; i++){
             c =  new Chat("pepe"+i);
-            m = new Message();
-            m.setDestination("pepe"+i);
-            m.setMsg("Prueba"+50+i);
-            c.addMsg(m);
+            for (int j=0; j<10;j++){
+                m = new Message();
+                if(j%2==0)
+                    m.setDestination("pepe0");
+                else
+                    m.setDestination("pepe"+j);
+                m.setMsg("Prueba"+50+j);
+                c.addMsg(m);
+            }
             c.setOnline(i%2==0);
             l.add(c);
         }
-        return l;
+        //return l;
+        return MainActivity.getMainAct().getChatController().getChats();
+    }
+
+    public static void addMessage(Message msg){
+        MainActivity.getMainAct().getChatController().addMsg(msg);
+        //adapter.notifyDataSetChanged();
+        l.clear();
+        l.addAll( MainActivity.getMainAct().getChatController().getChats());
+        adapter.notifyDataSetChanged();
+        ConversationFragment.refreshChat();
+    }
+
+    public static class ConnectTask extends AsyncTask<String, String, TcpClient> {
+
+        @Override
+        protected TcpClient doInBackground(String... message) {
+
+            LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
+                @Override
+                public void messageReceived(Message message) {
+                    Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
+                    //MainActivity.getMainAct().getChatController().addMsg(message);
+                    publishProgress(message.toJson());
+
+
+                    // MainActivity.getMainAct().refreshChatList();
+
+                }
+            });
+
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+
+            //in the arrayList we add the messaged received from server
+            //arrayList.add(values[0]);
+
+            // notify the adapter that the data set has changed. This means that new message received
+            // from server was added to the list
+            Message msg = new Message();
+            msg.parse(values[0]);
+            addMessage(msg);
+            //adapter.notifyDataSetChanged();
+            Log.println(Log.INFO,"Client_TCP_EXCAMPLE", MainActivity.getChatController().getChats().toString());
+        }
     }
 }

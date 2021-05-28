@@ -29,7 +29,6 @@ public class Chat {
     }
 
     public void addMsg(Message msg){
-        msg.setDestination(destination);
         msgs.add(msg);
         online = true;
     }

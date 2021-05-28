@@ -1,5 +1,6 @@
 package com.es.ucm.yaco.loraconnect_example;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -13,10 +14,10 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
+import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.google.android.material.snackbar.Snackbar;
 
 public class FirstFragment extends Fragment {
-
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -28,6 +29,8 @@ public class FirstFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        MainActivity.changeActiveItem(0,false); //desactivar la opcion Desconectar
+        MainActivity.changeActiveItem(1,true); //activar la opcion Configuración
 
         view.findViewById(R.id.button_first).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,13 +42,53 @@ public class FirstFragment extends Fragment {
                         .navigate(R.id.action_FirstFragment_to_chatList);
                 Snackbar.make(view, "Conectado correctamente!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                /*LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
+
+                //TODO: ocultar menu configuracion
+                new ChatListFragment.ConnectTask().execute("");
+                /*
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void messageReceived(Message message) {
-                        Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
+                    public void run() {
+                        // do your stuff
+                        LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
+                            @Override
+                            public void messageReceived(Message message) {
+                                Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
+                                //MainActivity.getMainAct().getChatController().addMsg(message);
+                                ChatListFragment.addMessage(message);
+                                // MainActivity.getMainAct().refreshChatList();
+
+                            }
+                        });
+
+                        synchronized(this)
+                        {
+                            this.notify();
+                        }
                     }
-                });*/
+                });
+                */
+
+                /*
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // do your stuff
+                        LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
+                            @Override
+                            public void messageReceived(Message message) {
+                                Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
+                                //MainActivity.getMainAct().getChatController().addMsg(message);
+                                ChatListFragment.addMessage(message);
+                               // MainActivity.getMainAct().refreshChatList();
+
+                            }
+                        });
+                    }
+                }).start();*/
+
             }
         });
     }
+
 }

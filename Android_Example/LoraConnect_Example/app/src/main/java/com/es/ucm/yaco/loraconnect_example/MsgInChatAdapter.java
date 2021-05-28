@@ -43,7 +43,7 @@ public class MsgInChatAdapter extends BaseAdapter {
         TextView msg;
 
         //if(convertView==null)
-        if(list.get(position).getDestination().equals("pepe0"))
+        if(list.get(position).getDestination().equals(LoraConnect.getUsername()))
             convertView = LayoutInflater.from(context).inflate(R.layout.chat_msg_left,null);
         else
             convertView = LayoutInflater.from(context).inflate(R.layout.chat_msg_right,null);
@@ -52,5 +52,10 @@ public class MsgInChatAdapter extends BaseAdapter {
         msg.setText(list.get(position).getMsg());
 
         return convertView;
+    }
+
+    public void updateList(ArrayList<Message> l){
+        list=l;
+        notifyDataSetChanged();
     }
 }
