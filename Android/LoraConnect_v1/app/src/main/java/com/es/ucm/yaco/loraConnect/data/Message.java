@@ -1,6 +1,9 @@
 package com.es.ucm.yaco.loraConnect.data;
 
+import android.content.Context;
+
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
+import com.es.ucm.yaco.loraConnect.controller.ControllerGps;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
 
 import org.json.JSONException;
@@ -16,6 +19,8 @@ public class Message {
     private String destination;
     private String msg;
     private Date timestamp;
+    private String longuitud;
+    private String latitud;
 
     /**
      * Crear mensaje
@@ -23,6 +28,18 @@ public class Message {
     public Message(){
         this.timestamp = new Date();
         this.source = ControllerConfig.getUsername();
+    }
+
+    /**
+     * Se recuperan las coordenadas GPS del dispositivo y se setean en el mensaje
+     */
+    public void setCoordenadas(){
+        String coor[] = ControllerGps.getCurrentlocation();
+        if(coor!=null && coor[0]!=null && !coor[0].isEmpty()
+                && coor[1]!=null && !coor[1].isEmpty()){
+            longuitud=coor[0];
+            latitud=coor[1];
+        }
     }
 
     /**
@@ -74,7 +91,7 @@ public class Message {
      * Setea el origen del mensaje
      * @param source nombre de usuario originario del mensaje
      */
-    private void setSource(String source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
@@ -119,6 +136,38 @@ public class Message {
     }
 
     /**
+     * Recupera la longuitud  de las coordenadas gps
+     * @return longuitud
+     */
+    public String getLonguitud() {
+        return longuitud;
+    }
+
+    /**
+     * Setea la longuitud
+     * @param longuitud  de las coordenadas gps
+     */
+    public void setLonguitud(String longuitud) {
+        this.longuitud = longuitud;
+    }
+
+    /**
+     * Recupera la latitud
+     * @return latitud
+     */
+    public String getLatitud() {
+        return latitud;
+    }
+
+    /**
+     * Setea la latitud
+     * @param latitud  de las coordenadas gps
+     */
+    public void setLatitud(String latitud) {
+        this.latitud = latitud;
+    }
+
+    /**
      * Parsea el String json recibido por TCP para disponer de la información en el objeto Message
      * @param json de entrada
      */
@@ -130,6 +179,10 @@ public class Message {
             setDestination(obj.getString(Constants.json_destination));
             setSource(obj.getString(Constants.json_source));
             setMsg(obj.getString(Constants.json_message));
+            if(obj.has(Constants.json_longuitud))
+                setLonguitud(obj.getString(Constants.json_longuitud));
+            if(obj.has(Constants.json_latitud))
+                setLonguitud(obj.getString(Constants.json_latitud));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -142,13 +195,19 @@ public class Message {
      */
     public String toJson(){
         String jsonString="";
+        JSONObject json;
         try {
-            jsonString = new JSONObject()
+            json = new JSONObject()
             .put(Constants.json_operation, type)
             .put(Constants.json_source, source)
             .put(Constants.json_destination, destination)
-            .put(Constants.json_message, msg)
-            .toString();
+            .put(Constants.json_message, msg);
+            if(longuitud!=null && !longuitud.isEmpty())
+                json.put(Constants.json_longuitud, longuitud);
+            if(latitud!=null && !latitud.isEmpty())
+                json.put(Constants.json_latitud, latitud);
+
+            jsonString = json.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -2,9 +2,8 @@ package com.es.ucm.yaco.loraConnect;
 
 import android.content.Context;
 
-import com.es.ucm.yaco.loraConnect.controller.ControllerChat;
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
-import com.es.ucm.yaco.loraConnect.data.Chat;
+import com.es.ucm.yaco.loraConnect.controller.ControllerGps;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
 import com.es.ucm.yaco.loraConnect.utils.TcpClient;
@@ -17,8 +16,8 @@ import java.util.ArrayList;
  */
 public class LoraConnect {
     private static ControllerConfig controllerConfig = null;
-    private static ControllerChat controllerChat = null;
     private static TcpClient controllerTCP = null;
+    private static ControllerGps controllerGps = null;
 
     /**
      * Inicia LoraConnect library.
@@ -27,8 +26,9 @@ public class LoraConnect {
     public static void init(Context context){
         if(controllerConfig == null)
             controllerConfig = new ControllerConfig(context);
-        if(controllerChat == null)
-            controllerChat = new ControllerChat();
+        if(controllerGps == null)
+            controllerGps = new ControllerGps(context);
+
     }
     /**
      * Proceso que se inicia para realizar y gestionar la conexión con la ESP32
@@ -48,24 +48,30 @@ public class LoraConnect {
     public static String getUsername(){ return controllerConfig.getUsername();}
 
     /**
+     * Recupera el nombre del usuario
+     * @return String nombre
+     */
+    public static boolean isSendGps(){ return controllerConfig.isSendGps();}
+
+    /**
      * Setea el nombre del usuario para almacenarlo
      * @param user nombre a guardar
      */
     public static void setUsername(String user){
         controllerConfig.setUsername(user);
-        Message m = new Message();
+        /*Message m = new Message();
         m.configMessage(user);
 
-        controllerTCP.send(m.toJson());
+        controllerTCP.send(m.toJson());*/
     }
 
-    //Chats ----------------------------------------------------------------------------------------
-
     /**
-     * Recupera la lista ordenada de chats
-     * @return ArrayList<Chat> lista de chats
+     * Setea la configuración gps
+     * @param value valor a guardar
      */
-    public static ArrayList<Chat> getListOfChats(){ return controllerChat.getChats();}
+    public static void setSendGps(boolean value){
+        controllerConfig.setSendGps(value);
+    }
 
     //Mensajería -----------------------------------------------------------------------------------
 
@@ -75,14 +81,16 @@ public class LoraConnect {
      * @param destination nombre del destino
      * @param msg mensaje a enviar
      */
-    public static void sendMessage(String destination, String msg){
+    public static Message sendMessage(String destination, String msg){
         Message m = new Message();
         m.setType(Constants.TYPE_MSG_MSG);
         m.setDestination(destination);
         m.setMsg(msg);
-
+        m.setSource(getUsername());
+        if(controllerConfig.isSendGps())
+            m.setCoordenadas();
         controllerTCP.send(m.toJson());
-        controllerChat.addMsg(m);
+        return m;
     }
 
     /**
@@ -98,4 +106,13 @@ public class LoraConnect {
     public interface OnMessageReceived {
         public void messageReceived(Message message);
     }
+
+    /**
+     * Desconecta de la ESP32
+     */
+    public static void disconnect(){
+        if(controllerTCP != null)
+            controllerTCP.disconnect();
+    }
+
 }

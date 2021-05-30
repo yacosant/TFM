@@ -26,6 +26,7 @@ public class TcpClient {
 
     public TcpClient(LoraConnect.OnMessageReceived listener) {
         mMessageListener = listener;
+        usersConnected = new ArrayList<String>();
     }
 
     /**
@@ -117,10 +118,11 @@ public class TcpClient {
                                 Log.d("TCP", "Usuario "+msg.getSource()+ " NO borrado");
                             Log.d("TCP", "Lista: "+usersConnected.toString());
                         }
-                        else if(msg.getType()== Constants.TYPE_MSG_MSG){
-                            //Se notifica a la Activity que se ha recibido un mensaje
-                            mMessageListener.messageReceived(msg);
-                        }
+
+                        //if(msg.getType()== Constants.TYPE_MSG_MSG)
+
+                        //Se notifica a la Activity que se ha recibido un mensaje
+                        mMessageListener.messageReceived(msg);
                     }
                 }
 
@@ -145,4 +147,5 @@ public class TcpClient {
     public ArrayList<String> getUsersConnected(){
         return usersConnected;
     }
+
 }
