@@ -38,55 +38,11 @@ public class FirstFragment extends Fragment {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 NavHostFragment.findNavController(FirstFragment.this)
-                        //.navigate(R.id.action_SecondFragment_to_FirstFragment);
                         .navigate(R.id.action_FirstFragment_to_chatList);
-                Snackbar.make(view, "Conectado correctamente!", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Conectado correctamente!", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
 
-                //TODO: ocultar menu configuracion
                 new ChatListFragment.ConnectTask().execute("");
-                /*
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // do your stuff
-                        LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
-                            @Override
-                            public void messageReceived(Message message) {
-                                Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
-                                //MainActivity.getMainAct().getChatController().addMsg(message);
-                                ChatListFragment.addMessage(message);
-                                // MainActivity.getMainAct().refreshChatList();
-
-                            }
-                        });
-
-                        synchronized(this)
-                        {
-                            this.notify();
-                        }
-                    }
-                });
-                */
-
-                /*
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // do your stuff
-                        LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
-                            @Override
-                            public void messageReceived(Message message) {
-                                Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
-                                //MainActivity.getMainAct().getChatController().addMsg(message);
-                                ChatListFragment.addMessage(message);
-                               // MainActivity.getMainAct().refreshChatList();
-
-                            }
-                        });
-                    }
-                }).start();*/
-
             }
         });
     }

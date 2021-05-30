@@ -29,7 +29,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 public class ConversationFragment extends Fragment {
-    private static int pos;
+    //private static int pos;
+    private static String dest;
     ListView listViewMessages;
     TextView nombreChat;
     ImageView img;
@@ -50,8 +51,17 @@ public class ConversationFragment extends Fragment {
         img =  (ImageView)view.findViewById(R.id.imageViewConversation);
         msg =  (EditText) view.findViewById(R.id.editTextText_Conversacion);
 
-        pos= Integer.parseInt(getArguments().get("idChat").toString());
-        chat= MainActivity.getChatController().getChats().get(pos);
+        /*if(getArguments().get("idChat")!=null) {
+            pos = Integer.parseInt(getArguments().get("idChat").toString());
+            chat = MainActivity.getChatController().getChats().get(pos);
+        }*/
+        if(getArguments().get("nameChat")!=null) {
+            dest = getArguments().get("nameChat").toString();
+            chat = MainActivity.getChatController().getChat(dest);
+        }
+
+        chat.setNewMsg(false);//marca como leido
+
         nombreChat.setText(chat.getDestination());
         if(chat.isOnline())
             img.setImageResource(android.R.drawable.presence_online);
@@ -60,7 +70,8 @@ public class ConversationFragment extends Fragment {
 
         adapter = new MsgInChatAdapter(getActivity().getApplicationContext(),chat.getMsgs());
         listViewMessages.setAdapter(adapter);
-
+        msg.setActivated(chat.isOnline());
+        enviar.setActivated(chat.isOnline());
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,8 +91,8 @@ public class ConversationFragment extends Fragment {
 
     static public void refreshChat(){
         if (adapter!=null)
-        //    adapter.notifyDataSetChanged();
-            adapter.updateList(MainActivity.getChatController().getChats().get(pos).getMsgs());
+            adapter.updateList(MainActivity.getChatController().getChat(dest).getMsgs());
+        //  adapter.updateList(MainActivity.getChatController().getChats().get(pos).getMsgs());
     }
 
 

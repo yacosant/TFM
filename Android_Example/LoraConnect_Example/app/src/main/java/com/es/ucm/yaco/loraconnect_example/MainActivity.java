@@ -1,16 +1,24 @@
 package com.es.ucm.yaco.loraconnect_example;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
+import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraconnect_example.controller.ControllerChat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -25,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity mA;
     private static ControllerChat controllerChat = new ControllerChat();
     private static boolean back = false;
+    private static boolean back2 = false;
     private static Menu menu;
 
     @Override
@@ -34,14 +43,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         LoraConnect.init(this);
-       FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         mA = this;
     }
 @Override
@@ -92,15 +94,11 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed (){
         if (back) {
             super.onBackPressed();
+            if(back2){
+                back2=false;
+                super.onBackPressed();
+            }
         }
-    }
-
-    protected void refreshChatList(){
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.chatList);
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.detach(currentFragment);
-        ft.attach(currentFragment);
-        ft.commit();
     }
 
     protected static MainActivity getMainAct(){
@@ -115,8 +113,51 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.back = back;
     }
 
+    protected static void setBack2(boolean back2) {
+        MainActivity.back2 = back2;
+    }
+
     protected static void changeActiveItem(int pos, boolean value){
         if(menu!=null)
             menu.getItem(pos).setEnabled(value);
+    }
+
+    public static void pushNotification(Message msg){
+
+        NotificationManager mNotificationManager;
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mA.getApplicationContext(), "notify_001");
+        //Intent ii = new Intent(mA.getApplicationContext(), MainActivity.class);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(mA, 0, null, 0);
+
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+        bigText.bigText("");
+        bigText.setBigContentTitle("Mensaje de "+msg.getSource());
+        bigText.setSummaryText("Mensaje por Lora");
+
+        //mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSmallIcon(R.drawable.back_msg_left);
+        mBuilder.setContentTitle("Mensaje de "+msg.getSource());
+        mBuilder.setContentText(msg.getMsg());
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setStyle(bigText);
+
+        mNotificationManager =
+                (NotificationManager) mA.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // === Removed some obsoletes
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            String channelId = "Your_channel_id";
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_HIGH);
+            mNotificationManager.createNotificationChannel(channel);
+            mBuilder.setChannelId(channelId);
+        }
+
+        mNotificationManager.notify(0, mBuilder.build());
     }
 }

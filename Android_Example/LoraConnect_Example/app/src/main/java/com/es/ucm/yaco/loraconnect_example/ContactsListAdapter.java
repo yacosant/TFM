@@ -1,7 +1,6 @@
 package com.es.ucm.yaco.loraconnect_example;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import com.es.ucm.yaco.loraconnect_example.data.Chat;
-
 import java.util.ArrayList;
 
-public class ChatListAdapter extends BaseAdapter {
+public class ContactsListAdapter extends BaseAdapter {
     Context context;
-    ArrayList<Chat> list;
+    ArrayList<String> list;
 
-    public ChatListAdapter(Context context, ArrayList<Chat> list) {
+    public ContactsListAdapter(Context context, ArrayList<String> list) {
         this.context = context;
         this.list = list;
     }
@@ -43,7 +39,6 @@ public class ChatListAdapter extends BaseAdapter {
         ImageView img;
         TextView nombre;
         TextView msg;
-
         if(convertView==null)
             convertView = LayoutInflater.from(context).inflate(R.layout.fragment_itemchat,null);
 
@@ -51,17 +46,9 @@ public class ChatListAdapter extends BaseAdapter {
         nombre = convertView.findViewById(R.id.textViewNombreChat);
         msg = convertView.findViewById(R.id.textViewUltimoMsgChat);
 
-        nombre.setText(list.get(position).getDestination());
-        msg.setText(list.get(position).getLastMsg().getMsg());
-        if(list.get(position).isNewMsg())
-            msg.setTypeface(null, Typeface.BOLD);
-        else
-            msg.setTypeface(null, Typeface.NORMAL);
-
-        if(list.get(position).isOnline())
-            img.setImageResource(android.R.drawable.presence_online);
-        else
-            img.setImageResource(android.R.drawable.presence_offline);
+        nombre.setText(list.get(position));
+        msg.setText("");
+        img.setImageResource(android.R.drawable.presence_online);
 
         return convertView;
     }

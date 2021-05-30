@@ -3,6 +3,7 @@ package com.es.ucm.yaco.loraconnect_example.controller;
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraconnect_example.ChatListAdapter;
+import com.es.ucm.yaco.loraconnect_example.MainActivity;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ControllerChat {
         comparator = new Comparator<Chat>(){
             @Override
             public int compare(Chat o1, Chat o2) {
-                return o1.getLastMsg().getTimestamp().compareTo(o2.getLastMsg().getTimestamp());
+                return o2.getLastMsg().getTimestamp().compareTo(o1.getLastMsg().getTimestamp());
             }
         };
     }
@@ -43,14 +44,40 @@ public class ControllerChat {
      */
     public void addMsg(Message msg){
         String destino= msg.getDestination();
-        if(LoraConnect.getUsername().equals(destino))
-            destino= msg.getSource();
+        if(LoraConnect.getUsername().equals(msg.getDestination()))
+            destino = msg.getSource();
 
         Chat c = chats.get(destino);
         if(c == null) //Si no existe el chat
             c = new Chat(destino);
         c.addMsg(msg);
+        if(LoraConnect.getUsername().equals(msg.getDestination())) {
+            c.setNewMsg(true);
+            MainActivity.pushNotification(msg);//Crea notificación push
+        }
         chats.put(destino,c);
+    }
+
+    /**
+     * Añade un chat nuevo si no existe el chat y si ya existe, lo recupera
+     * @param  dest String con el nombre del destinatario
+     */
+    public void addChat(String dest){
+        Chat c = chats.get(dest);
+        if(c == null) { //Si no existe el chat
+            c = new Chat(dest);
+            chats.put(dest, c);
+        }
+        c.setOnline(true);
+    }
+
+    /**
+     * Recupera el chat indicado por el destino
+     * @param dest Nombre del destinatario
+     * @return  Chat chat
+     */
+    public Chat getChat(String dest) {
+        return chats.get(dest);
     }
 
 }

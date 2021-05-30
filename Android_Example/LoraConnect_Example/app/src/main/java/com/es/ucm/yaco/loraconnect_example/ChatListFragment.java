@@ -20,6 +20,7 @@ import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class ChatListFragment extends Fragment {
                              Bundle savedInstanceState) {
         MainActivity.changeActiveItem(0,true); //activar la opcion Desconectar
         MainActivity.changeActiveItem(1,false); //desactivar la opcion Configuración
+
         l = MainActivity.getChatController().getChats();
         MainActivity.setBack(false);
         View view = inflater.inflate(R.layout.fragmen_chatslist, container, false);
@@ -50,17 +52,24 @@ public class ChatListFragment extends Fragment {
         listViewChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*Snackbar.make(view, String.valueOf(position), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Toast.makeText(getActivity().getApplicationContext(),String.valueOf(l.get(position).getDestination()),Toast.LENGTH_SHORT).show();
-                */
                 Bundle bundle = new Bundle();
-                bundle.putString("idChat", String.valueOf(position));
+                //bundle.putString("idChat", String.valueOf(position));
+                bundle.putString("nameChat", l.get(position).getDestination());
 
                 NavHostFragment.findNavController(ChatListFragment.this)
                         .navigate(R.id.action_chatList_to_chatFragment,bundle);
             }
         });
+
+        FloatingActionButton fab = view.findViewById(R.id.fab_newChat);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(ChatListFragment.this)
+                        .navigate(R.id.action_chatList_to_contactListFragment);
+            }
+        });
+
         return view;
     }
 
@@ -89,7 +98,6 @@ public class ChatListFragment extends Fragment {
 
     public static void addMessage(Message msg){
         MainActivity.getMainAct().getChatController().addMsg(msg);
-        //adapter.notifyDataSetChanged();
         l.clear();
         l.addAll( MainActivity.getMainAct().getChatController().getChats());
         adapter.notifyDataSetChanged();
@@ -105,12 +113,7 @@ public class ChatListFragment extends Fragment {
                 @Override
                 public void messageReceived(Message message) {
                     Log.println(Log.INFO,"Client_TCP_EXCAMPLE", message.toJson());
-                    //MainActivity.getMainAct().getChatController().addMsg(message);
                     publishProgress(message.toJson());
-
-
-                    // MainActivity.getMainAct().refreshChatList();
-
                 }
             });
 
@@ -121,16 +124,17 @@ public class ChatListFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-
-            //in the arrayList we add the messaged received from server
-            //arrayList.add(values[0]);
-
-            // notify the adapter that the data set has changed. This means that new message received
-            // from server was added to the list
             Message msg = new Message();
             msg.parse(values[0]);
-            addMessage(msg);
-            //adapter.notifyDataSetChanged();
+            if(msg.getType()==0) //Mensaje
+                addMessage(msg);
+            else if(msg.getType()==3) { //Hello
+                MainActivity.getChatController().getChat(msg.getSource()).setOnline(true);
+            }
+            else if(msg.getType()==4) { //Bye
+                MainActivity.getChatController().getChat(msg.getSource()).setOnline(false);
+            }
+
             Log.println(Log.INFO,"Client_TCP_EXCAMPLE", MainActivity.getChatController().getChats().toString());
         }
     }

@@ -9,6 +9,7 @@ public class Chat {
     private String destination;
     private ArrayList<Message> msgs;
     private boolean online;
+    private boolean newMsg;
 
     public Chat(String dest){
         destination = dest;
@@ -25,7 +26,10 @@ public class Chat {
     }
 
     public Message getLastMsg(){
-       return msgs.get(msgs.size()-1);
+       if(msgs.size()-1>=0)
+            return msgs.get(msgs.size()-1);
+       else
+           return new Message();
     }
 
     public void addMsg(Message msg){
@@ -39,5 +43,13 @@ public class Chat {
 
     public boolean isOnline() {
         return online;
+    }
+
+    public boolean isNewMsg() {
+        return newMsg;
+    }
+
+    public void setNewMsg(boolean newMsg) {
+        this.newMsg = newMsg;
     }
 }
