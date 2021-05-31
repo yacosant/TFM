@@ -41,10 +41,10 @@ QRCode qrcode;                  // Create the QR code
 #define BAND 866E6
 
 // Set these to your desired credentials.
-const char *ssid = "AP";
+char *ssid = "AP";
 const char *password = "yaco123456789";
 String qr="";
-String userName = "yaco";
+String userName = "";
 
 const int QRcode_Version = 3;   //  set the version (range 1->40)
 const int QRcode_ECC = 0;       //  set the Error Correction level (range 0-3) or symbolic (ECC_LOW, ECC_MEDIUM, ECC_QUARTILE and ECC_HIGH)
@@ -71,6 +71,7 @@ void setup() {
   setup_Wifi();
   //printLcd("RUNING");
   drawQR();
+  printLcd(ssid,1,false,SCREEN_WIDTH/2,0);
 }
 
 
@@ -152,30 +153,48 @@ void loop() {
         msg = new char[len+1];
                
         client.readBytes(msg, len);
-        //msg_log = strcat("[TCP][IN] Message: ",  msg);
-        //Serial.println(msg_log);
+        
         Serial.println("[TCP][IN] Mensaje:");
         Serial.print(msg);
        if(jsonFlag)
         deserializeObject(String(msg));
-        if(msgObj.getOp() == 1)
+        if(msgObj.getOp() == 1){// msg configuracion
           Serial.println("MSG de configuracion");
-         else if(msgObj.getOp() == 0){
+        }
+         else if(msgObj.getOp() == 0){ //msg normal
           Serial.println("MSG de msg");
          }
+         else if(msgObj.getOp() == 2){//ack - no usado
+          Serial.println("MSG de ACK");
+         }
+         else if(msgObj.getOp() == 3){//Hello
+          Serial.println("MSG de Hello");
+          userName=msgObj.getOrigen();
+         }
+         else if(msgObj.getOp() == 4){//Bye
+          Serial.println("MSG de Bye");
+         }
+         
+        /* 
         printLcd("[TCP] Recibido: ",1,true,0,30);
         printLcd(msg,1,false,0,40);
+        */
         
-        //Send LoRa packet to receiver
-        LoRa.beginPacket();
-        LoRa.print(msg);
-        LoRa.endPacket();
+        if(msgObj.getOp() != 1){
+          //lcdMsg = "[Enviando] "+msgObj.getDestino()+" :";
+          printLcd("[Enviando] ",1,true,0,30);
+          printLcd(msg,1,false,0,40);
+          //Send LoRa packet to receiver
+          LoRa.beginPacket();
+          LoRa.print(msg);
+          LoRa.endPacket();
+        }
         
-        client.write(msg,len);
+        //client.write(msg,len);//echo
         delete[] msg;
 
       }//Fin if mensaje recibido
-      if (lenLora!=0) {//Msg recibido por LORA
+      if (userName!="" && lenLora!=0) {//Msg recibido por LORA
         Serial.println("[LORA][IN] Mensaje:");
 
         while (LoRa.available()) {
@@ -186,19 +205,20 @@ void loop() {
         //Deserializar y si es para mi, lo pinto y reenvio al dispositivo
         if(jsonFlag)
           deserializeObject(msgLoraStr);
-          if(msgObj.getDestino() == userName)
+          if(msgObj.getDestino() == userName || msgObj.getOp()==3 || msgObj.getOp()==4){
             Serial.println("Es para ti este mensaje");
-        //---------------------
-        rssi = LoRa.packetRssi();
-        Serial.print(" with RSSI ");    
-        Serial.println(rssi);
-        msgLoraStr=msgLoraStr+"\n";
-        msgLora = const_cast<char*>(msgLoraStr.c_str());
-
-        printLcd("[LORA] Recibido: ",1,true,0,30);
-        printLcd(msgLora,1,false,0,40);
-
-        client.print(msgLora);
+            //---------------------
+            rssi = LoRa.packetRssi();
+            Serial.print(" with RSSI ");    
+            Serial.println(rssi);
+            msgLoraStr=msgLoraStr+"\n";
+            msgLora = const_cast<char*>(msgLoraStr.c_str());
+            //lcdMsg = "[Recibido] De "+msgObj.getOrigen()+" : ";
+            printLcd("[Recibido] ",1,true,0,30);
+            printLcd(msgLora,1,false,0,40);
+    
+            client.print(msgLora);
+        }
       }
 
       
