@@ -1,6 +1,7 @@
 package com.es.ucm.yaco.loraConnect.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
 import com.es.ucm.yaco.loraConnect.controller.ControllerGps;
@@ -171,21 +172,25 @@ public class Message {
      * Parsea el String json recibido por TCP para disponer de la información en el objeto Message
      * @param json de entrada
      */
-    public void parse(String json){
+    public void parse(String json) throws JSONException {
         JSONObject obj;
         try {
             obj = new JSONObject(json);
             setType((short)obj.getInt(Constants.json_operation));
-            setDestination(obj.getString(Constants.json_destination));
+            if(obj.has(Constants.json_destination))
+                setDestination(obj.getString(Constants.json_destination));
             setSource(obj.getString(Constants.json_source));
-            setMsg(obj.getString(Constants.json_message));
+            if(obj.has(Constants.json_message))
+                setMsg(obj.getString(Constants.json_message));
             if(obj.has(Constants.json_longuitud))
                 setLonguitud(obj.getString(Constants.json_longuitud));
             if(obj.has(Constants.json_latitud))
                 setLonguitud(obj.getString(Constants.json_latitud));
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Log.d("ParseMsg", "MSG descartado por mal formato");
+            throw e;
         }
     }
 

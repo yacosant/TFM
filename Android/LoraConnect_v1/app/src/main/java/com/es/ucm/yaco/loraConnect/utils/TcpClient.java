@@ -90,39 +90,40 @@ public class TcpClient {
                 //in this while the client listens for the messages sent by the server
                 while (connected) {
                     msg_string = mBufferIn.readLine();
-
-                    if (msg_string != null && mMessageListener != null) {
-                        Log.d("TCP", "MSG recibido: "+msg_string);
-                        msg = new Message();
-                        msg.parse(msg_string);
-
-                        if(msg.getType()==Constants.TYPE_MSG_HELLO || msg.getType()==Constants.TYPE_MSG_HELLO_ACK) {
-                            if (!usersConnected.contains(msg.getSource())){
-                                usersConnected.add(msg.getSource());
-                                Log.d("TCP", "Usuario añadido " + msg.getSource());
-                            }
-                            Log.d("TCP", "Lista: " + usersConnected.toString());
-                        }
-
-                        if(msg.getType()==Constants.TYPE_MSG_HELLO){ //Se responde al usuario que estamos en linea
-                            String d = msg.getDestination();
+                    try{
+                        if (msg_string != null && mMessageListener != null) {
+                            Log.d("TCP", "MSG recibido: " + msg_string);
                             msg = new Message();
-                            msg.setType(Constants.TYPE_MSG_HELLO);
-                            msg.setDestination(d);
-                            send(msg.toJson());
-                        }
-                        else if(msg.getType()== Constants.TYPE_MSG_BYE){
-                            if(usersConnected.remove(msg.getSource()))
-                                Log.d("TCP", "Usuario borrado "+msg.getSource());
-                            else
-                                Log.d("TCP", "Usuario "+msg.getSource()+ " NO borrado");
-                            Log.d("TCP", "Lista: "+usersConnected.toString());
-                        }
+                            msg.parse(msg_string);
 
-                        //if(msg.getType()== Constants.TYPE_MSG_MSG)
+                            if (msg.getType() == Constants.TYPE_MSG_HELLO || msg.getType() == Constants.TYPE_MSG_HELLO_ACK) {
+                                if (!usersConnected.contains(msg.getSource())) {
+                                    usersConnected.add(msg.getSource());
+                                    Log.d("TCP", "Usuario añadido " + msg.getSource());
+                                }
+                                Log.d("TCP", "Lista: " + usersConnected.toString());
+                            }
 
-                        //Se notifica a la Activity que se ha recibido un mensaje
-                        mMessageListener.messageReceived(msg);
+                            if (msg.getType() == Constants.TYPE_MSG_HELLO) { //Se responde al usuario que estamos en linea
+                                Message msgAck = new Message();
+                                msgAck.setType(Constants.TYPE_MSG_HELLO_ACK);
+                                msgAck.setDestination(msg.getSource());
+                                send(msgAck.toJson());
+                            } else if (msg.getType() == Constants.TYPE_MSG_BYE) {
+                                if (usersConnected.remove(msg.getSource()))
+                                    Log.d("TCP", "Usuario borrado " + msg.getSource());
+                                else
+                                    Log.d("TCP", "Usuario " + msg.getSource() + " NO borrado");
+                                Log.d("TCP", "Lista: " + usersConnected.toString());
+                            }
+
+                            //if(msg.getType()== Constants.TYPE_MSG_MSG)
+
+                            //Se notifica a la Activity que se ha recibido un mensaje
+                            mMessageListener.messageReceived(msg);
+                        }
+                    }catch (Exception e){
+                        Log.d("TCP", "MSG basura descartado: " + msg_string);
                     }
                 }
 
