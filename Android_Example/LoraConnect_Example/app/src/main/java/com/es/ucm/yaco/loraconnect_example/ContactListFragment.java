@@ -32,8 +32,8 @@ public class ContactListFragment extends Fragment {
         listView = (ListView)view.findViewById(R.id.listViewId_contact);
 
         adapter = new ContactsListAdapter(getActivity().getApplicationContext(),
-        //        l);
-        getFakeData());
+                l);
+        //getFakeData());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

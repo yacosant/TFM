@@ -23,6 +23,8 @@ import com.es.ucm.yaco.loraconnect_example.data.Chat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 public class ChatListFragment extends Fragment {
@@ -125,17 +127,25 @@ public class ChatListFragment extends Fragment {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
             Message msg = new Message();
-            msg.parse(values[0]);
-            if(msg.getType()==0) //Mensaje
-                addMessage(msg);
-            else if(msg.getType()==3) { //Hello
-                MainActivity.getChatController().getChat(msg.getSource()).setOnline(true);
-            }
-            else if(msg.getType()==4) { //Bye
-                MainActivity.getChatController().getChat(msg.getSource()).setOnline(false);
-            }
+            try {
+                msg.parse(values[0]);
 
-            Log.println(Log.INFO,"Client_TCP_EXCAMPLE", MainActivity.getChatController().getChats().toString());
+                if(msg.getType()==0) //Mensaje
+                    addMessage(msg);
+                else if(msg.getType()==3) { //Hello
+                    if(MainActivity.getChatController().getChat(msg.getSource())!=null)
+                        MainActivity.getChatController().getChat(msg.getSource()).setOnline(true);
+                }
+                else if(msg.getType()==4) { //Bye
+                    if(MainActivity.getChatController().getChat(msg.getSource())!=null)
+                        MainActivity.getChatController().getChat(msg.getSource()).setOnline(false);
+                }
+
+                Log.println(Log.INFO,"Client_TCP_EXCAMPLE", MainActivity.getChatController().getChats().toString());
+
+        } catch (JSONException e) {
+
+        }
         }
     }
 }
