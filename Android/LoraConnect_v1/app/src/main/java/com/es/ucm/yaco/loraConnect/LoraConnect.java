@@ -3,10 +3,9 @@ package com.es.ucm.yaco.loraConnect;
 import android.content.Context;
 
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
-import com.es.ucm.yaco.loraConnect.controller.ControllerGps;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
-import com.es.ucm.yaco.loraConnect.utils.TcpClient;
+import com.es.ucm.yaco.loraConnect.controller.ControllerTcp;
 
 import java.util.ArrayList;
 
@@ -16,8 +15,7 @@ import java.util.ArrayList;
  */
 public class LoraConnect {
     private static ControllerConfig controllerConfig = null;
-    private static TcpClient controllerTCP = null;
-    private static ControllerGps controllerGps = null;
+    private static ControllerTcp controllerTCP = null;
 
     /**
      * Inicia LoraConnect library.
@@ -26,9 +24,6 @@ public class LoraConnect {
     public static void init(Context context){
         if(controllerConfig == null)
             controllerConfig = new ControllerConfig(context);
-        if(controllerGps == null)
-            controllerGps = new ControllerGps(context);
-
     }
     /**
      * Proceso que se inicia para realizar y gestionar la conexión con la ESP32
@@ -36,7 +31,7 @@ public class LoraConnect {
      */
     public static void connectToESP32(OnMessageReceived listener){
         if(controllerTCP == null)
-            controllerTCP = new TcpClient(listener);
+            controllerTCP = new ControllerTcp(listener);
         controllerTCP.run();
     }
 
@@ -45,32 +40,23 @@ public class LoraConnect {
      * Recupera el nombre del usuario
      * @return String nombre
      */
-    public static String getUsername(){ return controllerConfig.getUsername();}
-
-    /**
-     * Recupera el nombre del usuario
-     * @return String nombre
-     */
-    public static boolean isSendGps(){ return controllerConfig.isSendGps();}
+    public static String getUsername(){
+        if(controllerConfig != null)
+            return controllerConfig.getUsername();
+        return "";
+    }
 
     /**
      * Setea el nombre del usuario para almacenarlo
      * @param user nombre a guardar
      */
     public static void setUsername(String user){
-        controllerConfig.setUsername(user);
+        if(controllerConfig != null)
+            controllerConfig.setUsername(user);
         /*Message m = new Message();
         m.configMessage(user);
 
         controllerTCP.send(m.toJson());*/
-    }
-
-    /**
-     * Setea la configuración gps
-     * @param value valor a guardar
-     */
-    public static void setSendGps(boolean value){
-        controllerConfig.setSendGps(value);
     }
 
     //Mensajería -----------------------------------------------------------------------------------
@@ -87,8 +73,6 @@ public class LoraConnect {
         m.setDestination(destination);
         m.setMsg(msg);
         m.setSource(getUsername());
-        if(controllerConfig.isSendGps())
-            m.setCoordenadas();
         controllerTCP.send(m.toJson());
         return m;
     }
@@ -98,7 +82,9 @@ public class LoraConnect {
      * @return ArrayList<String> lista de usuarios
      */
     public static ArrayList<String> getConnected(){
-        return controllerTCP.getUsersConnected();
+        if(controllerTCP != null)
+            return controllerTCP.getUsersConnected();
+        return new ArrayList<String>();
     }
 
     //Declare the interface. The method messageReceived(String message) will must be implemented in the MyActivity

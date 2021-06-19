@@ -1,9 +1,10 @@
-package com.es.ucm.yaco.loraConnect.utils;
+package com.es.ucm.yaco.loraConnect.controller;
 
 import android.util.Log;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
+import com.es.ucm.yaco.loraConnect.utils.Constants;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class TcpClient {
+public class ControllerTcp {
 
     private PrintWriter mBufferOut;
     private BufferedReader mBufferIn;
@@ -24,7 +25,7 @@ public class TcpClient {
     private Message msg;
     private ArrayList<String> usersConnected;
 
-    public TcpClient(LoraConnect.OnMessageReceived listener) {
+    public ControllerTcp(LoraConnect.OnMessageReceived listener) {
         mMessageListener = listener;
         usersConnected = new ArrayList<String>();
     }

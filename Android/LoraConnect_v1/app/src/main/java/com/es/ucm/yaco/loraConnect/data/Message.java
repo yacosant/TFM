@@ -1,10 +1,8 @@
 package com.es.ucm.yaco.loraConnect.data;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
-import com.es.ucm.yaco.loraConnect.controller.ControllerGps;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
 
 import org.json.JSONException;
@@ -20,8 +18,6 @@ public class Message {
     private String destination;
     private String msg;
     private Date timestamp;
-    private String longuitud;
-    private String latitud;
 
     /**
      * Crear mensaje
@@ -31,32 +27,11 @@ public class Message {
         this.source = ControllerConfig.getUsername();
     }
 
-    /**
-     * Se recuperan las coordenadas GPS del dispositivo y se setean en el mensaje
-     */
-    public void setCoordenadas(){
-        String coor[] = ControllerGps.getCurrentlocation();
-        if(coor!=null && coor[0]!=null && !coor[0].isEmpty()
-                && coor[1]!=null && !coor[1].isEmpty()){
-            longuitud=coor[0];
-            latitud=coor[1];
-        }
-    }
-
-    /**
-     * Se crea un mensaje de tipo configuración apra notificar a la ESP32
-     * @param config configuracion (texto en compo msg) que se va a enviar
-     */
-    public void configMessage(String config) {
-        Message m = new Message();
-        m.setMsg(config);
-        m.setType(Constants.TYPE_MSG_CONFIG);
-    }
 
     /**
      * Indica el tipo del mensaje. Puede ser:
      * TYPE_MSG_MSG = 0;
-     * TYPE_MSG_CONFIG = 1;
+     * TYPE_MSG_TEST = 1;
      * TYPE_MSG_HELLO_ACK = 2;
      * TYPE_MSG_HELLO = 3;
      * TYPE_MSG_BYE = 4;
@@ -71,7 +46,7 @@ public class Message {
      * @param type Indica el tipo del mensaje a setear.
      *  Puede ser Constant.*:
      * TYPE_MSG_MSG = 0;
-     * TYPE_MSG_CONFIG = 1;
+     * TYPE_MSG_TEST = 1;
      * TYPE_MSG_HELLO_ACK = 2;
      * TYPE_MSG_HELLO = 3;
      * TYPE_MSG_BYE = 4;
@@ -137,38 +112,6 @@ public class Message {
     }
 
     /**
-     * Recupera la longuitud  de las coordenadas gps
-     * @return longuitud
-     */
-    public String getLonguitud() {
-        return longuitud;
-    }
-
-    /**
-     * Setea la longuitud
-     * @param longuitud  de las coordenadas gps
-     */
-    public void setLonguitud(String longuitud) {
-        this.longuitud = longuitud;
-    }
-
-    /**
-     * Recupera la latitud
-     * @return latitud
-     */
-    public String getLatitud() {
-        return latitud;
-    }
-
-    /**
-     * Setea la latitud
-     * @param latitud  de las coordenadas gps
-     */
-    public void setLatitud(String latitud) {
-        this.latitud = latitud;
-    }
-
-    /**
      * Parsea el String json recibido por TCP para disponer de la información en el objeto Message
      * @param json de entrada
      */
@@ -182,10 +125,6 @@ public class Message {
             setSource(obj.getString(Constants.json_source));
             if(obj.has(Constants.json_message))
                 setMsg(obj.getString(Constants.json_message));
-            if(obj.has(Constants.json_longuitud))
-                setLonguitud(obj.getString(Constants.json_longuitud));
-            if(obj.has(Constants.json_latitud))
-                setLonguitud(obj.getString(Constants.json_latitud));
 
         } catch (JSONException e) {
             //e.printStackTrace();
@@ -207,10 +146,6 @@ public class Message {
             .put(Constants.json_source, source)
             .put(Constants.json_destination, destination)
             .put(Constants.json_message, msg);
-            if(longuitud!=null && !longuitud.isEmpty())
-                json.put(Constants.json_longuitud, longuitud);
-            if(latitud!=null && !latitud.isEmpty())
-                json.put(Constants.json_latitud, latitud);
 
             jsonString = json.toString();
         } catch (JSONException e) {
