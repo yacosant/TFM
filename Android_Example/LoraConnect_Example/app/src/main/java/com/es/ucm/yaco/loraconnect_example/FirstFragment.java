@@ -1,9 +1,7 @@
 package com.es.ucm.yaco.loraconnect_example;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.es.ucm.yaco.loraConnect.LoraConnect;
-import com.es.ucm.yaco.loraConnect.data.Message;
-import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.google.android.material.snackbar.Snackbar;
 
 public class FirstFragment extends Fragment {

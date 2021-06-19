@@ -1,32 +1,21 @@
 package com.es.ucm.yaco.loraconnect_example;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
-import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 
 public class ConversationFragment extends Fragment {
     //private static int pos;
@@ -51,10 +40,6 @@ public class ConversationFragment extends Fragment {
         img =  (ImageView)view.findViewById(R.id.imageViewConversation);
         msg =  (EditText) view.findViewById(R.id.editTextText_Conversacion);
 
-        /*if(getArguments().get("idChat")!=null) {
-            pos = Integer.parseInt(getArguments().get("idChat").toString());
-            chat = MainActivity.getChatController().getChats().get(pos);
-        }*/
         if(getArguments().get("nameChat")!=null) {
             dest = getArguments().get("nameChat").toString();
             chat = MainActivity.getChatController().getChat(dest);
@@ -92,7 +77,6 @@ public class ConversationFragment extends Fragment {
     static public void refreshChat(){
         if (adapter!=null)
             adapter.updateList(MainActivity.getChatController().getChat(dest).getMsgs());
-        //  adapter.updateList(MainActivity.getChatController().getChats().get(pos).getMsgs());
     }
 
 

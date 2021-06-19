@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
@@ -42,7 +41,6 @@ public class MsgInChatAdapter extends BaseAdapter {
         TextView nombre;
         TextView msg;
 
-        //if(convertView==null)
         if(list.get(position).getDestination().equals(LoraConnect.getUsername()))
             convertView = LayoutInflater.from(context).inflate(R.layout.chat_msg_left,null);
         else

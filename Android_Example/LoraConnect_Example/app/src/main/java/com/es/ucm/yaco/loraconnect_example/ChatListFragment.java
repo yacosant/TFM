@@ -1,8 +1,5 @@
 package com.es.ucm.yaco.loraconnect_example;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,17 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
+import com.es.ucm.yaco.loraConnect.controller.ControllerTcp;
 import com.es.ucm.yaco.loraConnect.data.Message;
-import com.es.ucm.yaco.loraConnect.utils.TcpClient;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 
@@ -47,7 +42,6 @@ public class ChatListFragment extends Fragment {
 
         adapter = new ChatListAdapter(getActivity().getApplicationContext(),
                 l);
-                //getFakeData());
 
         listViewChats.setAdapter(adapter);
 
@@ -55,7 +49,6 @@ public class ChatListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
-                //bundle.putString("idChat", String.valueOf(position));
                 bundle.putString("nameChat", l.get(position).getDestination());
 
                 NavHostFragment.findNavController(ChatListFragment.this)
@@ -94,7 +87,6 @@ public class ChatListFragment extends Fragment {
             c.setOnline(i%2==0);
             l.add(c);
         }
-        //return l;
         return MainActivity.getMainAct().getChatController().getChats();
     }
 
@@ -106,10 +98,10 @@ public class ChatListFragment extends Fragment {
         ConversationFragment.refreshChat();
     }
 
-    public static class ConnectTask extends AsyncTask<String, String, TcpClient> {
+    public static class ConnectTask extends AsyncTask<String, String, ControllerTcp> {
 
         @Override
-        protected TcpClient doInBackground(String... message) {
+        protected ControllerTcp doInBackground(String... message) {
 
             LoraConnect.connectToESP32(new LoraConnect.OnMessageReceived() {
                 @Override

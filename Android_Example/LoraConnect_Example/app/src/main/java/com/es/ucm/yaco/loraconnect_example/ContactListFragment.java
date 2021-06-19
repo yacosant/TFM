@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -33,15 +32,11 @@ public class ContactListFragment extends Fragment {
 
         adapter = new ContactsListAdapter(getActivity().getApplicationContext(),
                 l);
-        //getFakeData());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*Snackbar.make(view, String.valueOf(position), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Toast.makeText(getActivity().getApplicationContext(),l.get(position)),Toast.LENGTH_SHORT).show();*/
 
                 MainActivity.getChatController().addChat(l.get(position));
                 MainActivity.setBack2(true);

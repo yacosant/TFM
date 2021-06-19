@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="clip_vertical"
-    tools:context=".SecondFragment">
+    tools:context=".FirstFragment">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -21,10 +21,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Switch
-            android:id="@+id/switch_gpsConfig"
+            android:id="@+id/switch_modeTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adjuntar coordenadas GPS" />
+            android:text="Modo TEST" />
 
         <Space
             android:layout_width="match_parent"

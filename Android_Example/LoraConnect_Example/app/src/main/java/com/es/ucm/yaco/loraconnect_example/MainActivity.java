@@ -2,27 +2,19 @@ package com.es.ucm.yaco.loraconnect_example;
 
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraconnect_example.controller.ControllerChat;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -128,15 +120,12 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mA.getApplicationContext(), "notify_001");
-        //Intent ii = new Intent(mA.getApplicationContext(), MainActivity.class);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(mA, 0, null, 0);
 
         NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
         bigText.bigText("");
         bigText.setBigContentTitle("Mensaje de "+msg.getSource());
         bigText.setSummaryText("Mensaje por Lora");
 
-        //mBuilder.setContentIntent(pendingIntent);
         mBuilder.setSmallIcon(R.drawable.back_msg_left);
         mBuilder.setContentTitle("Mensaje de "+msg.getSource());
         mBuilder.setContentText(msg.getMsg());
@@ -147,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 (NotificationManager) mA.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // === Removed some obsoletes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             String channelId = "Your_channel_id";
             NotificationChannel channel = new NotificationChannel(
@@ -156,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     NotificationManager.IMPORTANCE_HIGH);
             mNotificationManager.createNotificationChannel(channel);
             mBuilder.setChannelId(channelId);
-        }
+        }*/
 
         mNotificationManager.notify(0, mBuilder.build());
     }
