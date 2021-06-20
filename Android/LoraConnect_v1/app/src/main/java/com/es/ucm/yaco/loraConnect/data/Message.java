@@ -8,7 +8,6 @@ import com.es.ucm.yaco.loraConnect.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 /**
  * Tipo de datos que empaqueta toda la información enviada y recibida por la ESP32
  */
@@ -17,13 +16,13 @@ public class Message {
     private String source;
     private String destination;
     private String msg;
-    private Date timestamp;
+    private long timestamp;
 
     /**
      * Crear mensaje
      */
     public Message(){
-        this.timestamp = new Date();
+        this.timestamp = System.currentTimeMillis();
         this.source = ControllerConfig.getUsername();
     }
 
@@ -107,8 +106,12 @@ public class Message {
      * Recupera la hora de creación del mensaje
      * @return timestamp
      */
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
+    }
+
+    private void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     /**
@@ -120,6 +123,7 @@ public class Message {
         try {
             obj = new JSONObject(json);
             setType((short)obj.getInt(Constants.json_operation));
+            setTimestamp(obj.getLong(Constants.json_timestamp));
             if(obj.has(Constants.json_destination))
                 setDestination(obj.getString(Constants.json_destination));
             setSource(obj.getString(Constants.json_source));
@@ -145,9 +149,11 @@ public class Message {
             .put(Constants.json_operation, type)
             .put(Constants.json_source, source)
             .put(Constants.json_destination, destination)
+            .put(Constants.json_timestamp, timestamp)
             .put(Constants.json_message, msg);
 
             jsonString = json.toString();
+            Log.i("TIME_PROCE_OUT", "es: " + (System.currentTimeMillis()-timestamp));
         } catch (JSONException e) {
             e.printStackTrace();
         }

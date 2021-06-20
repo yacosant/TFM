@@ -8,6 +8,7 @@ import com.es.ucm.yaco.loraConnect.utils.Constants;
 public class ControllerConfig {
     private static Context context;
     private static String username = "";
+    private boolean test = false;
 
     /*
     For an Activity:    new ControllerConfig(this);
@@ -24,13 +25,24 @@ public class ControllerConfig {
         // 1...N configs aquí
     }
 
+    public boolean isTest() {
+        return test;
+    }
 
-    public static String getUsername() {
+    public void setTest(boolean test) {
+        this.test = test;
+    }
+
+    public static String  getUsername() {
         return username;
     }
 
+    public static Context getContext() {
+        return context;
+    }
+
     public void setUsername(String username) {
-        this.username = username;
+        ControllerConfig.username = username;
         SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.PREFS_KEY_USERNAME, username);

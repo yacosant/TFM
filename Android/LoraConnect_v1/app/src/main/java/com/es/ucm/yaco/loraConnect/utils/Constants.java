@@ -7,6 +7,7 @@ public final class Constants {
     public static String json_operation = "op";
     public static String json_source = "o";
     public static String json_destination = "d";
+    public static String json_timestamp = "t";
     public static String json_message = "msg";
 
     public static final short TYPE_MSG_MSG = 0;
@@ -18,5 +19,8 @@ public final class Constants {
 
     public static final String TCP_SERVER_IP = "192.168.4.1";
     public static final int TCP_SERVER_PORT = 80;
+
+    public static final String MSG_CONTENT_TEST = "Msg de prueba;{t};{f};{n};{i}";
+    public static final String MSG_CONTENT_TEST_FIN = "FIN";
 
 }

@@ -3,6 +3,7 @@ package com.es.ucm.yaco.loraConnect;
 import android.content.Context;
 
 import com.es.ucm.yaco.loraConnect.controller.ControllerConfig;
+import com.es.ucm.yaco.loraConnect.controller.ControllerTest;
 import com.es.ucm.yaco.loraConnect.data.Message;
 import com.es.ucm.yaco.loraConnect.utils.Constants;
 import com.es.ucm.yaco.loraConnect.controller.ControllerTcp;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class LoraConnect {
     private static ControllerConfig controllerConfig = null;
     private static ControllerTcp controllerTCP = null;
+    private static ControllerTest controllerTest = null;
 
     /**
      * Inicia LoraConnect library.
@@ -32,6 +34,7 @@ public class LoraConnect {
     public static void connectToESP32(OnMessageReceived listener){
         if(controllerTCP == null)
             controllerTCP = new ControllerTcp(listener);
+        controllerTest = new ControllerTest(controllerTCP);
         controllerTCP.run();
     }
 
@@ -55,9 +58,28 @@ public class LoraConnect {
             controllerConfig.setUsername(user);
         /*Message m = new Message();
         m.configMessage(user);
-
         controllerTCP.send(m.toJson());*/
     }
+
+    /**
+     * Recupera el el flag de testeo
+     * @return boolean isTest
+     */
+    public static boolean isTest(){
+        if(controllerConfig != null)
+            return controllerConfig.isTest();
+        return false;
+    }
+
+    /**
+     * Setea el flag de testeo
+     * @param on nombre a guardar
+     */
+    public static void setTest(boolean on){
+        if(controllerConfig != null)
+            controllerConfig.setTest(on);
+    }
+
 
     //Mensajería -----------------------------------------------------------------------------------
 
@@ -99,6 +121,16 @@ public class LoraConnect {
     public static void disconnect(){
         if(controllerTCP != null)
             controllerTCP.disconnect();
+    }
+
+    //Test -----------------------------------------------------------------------------------------
+    /**
+     * Inicia el test contra el destinatario indicado.
+     * @param destination nombre del destino
+     * @return true si ha temrinado
+     */
+    public static Message makeTest(String destination, String params){
+        return controllerTest.makeTest(destination, params);
     }
 
 }
