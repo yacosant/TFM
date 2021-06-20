@@ -36,12 +36,10 @@ QRCode qrcode;                  // Create the QR code
 #define RST 14
 #define DIO0 26
 
-#define jsonFlag 1
-
 #define BAND 866E6
 
 // Set these to your desired credentials.
-char *ssid = "AP2";
+char *ssid = "AP";
 const char *password = "yaco123456789";
 String qr="";
 String userName = "";
@@ -156,9 +154,12 @@ void loop() {
         
         Serial.println("[TCP][IN] Mensaje:");
         Serial.print(msg);
-       if(jsonFlag)
         deserializeObject(String(msg));
-        if(msgObj.getOp() == 1){// msg configuracion
+
+        if(msgObj.getOp() == 3){//Hello
+          userName=msgObj.getOrigen();
+         }
+       /* if(msgObj.getOp() == 1){// msg configuracion
           Serial.println("MSG de configuracion");
         }
          else if(msgObj.getOp() == 0){ //msg normal
@@ -173,22 +174,22 @@ void loop() {
          }
          else if(msgObj.getOp() == 4){//Bye
           Serial.println("MSG de Bye");
-         }
+         }*/
          
         /* 
         printLcd("[TCP] Recibido: ",1,true,0,30);
         printLcd(msg,1,false,0,40);
         */
         
-        if(msgObj.getOp() != 1){
-          //lcdMsg = "[Enviando] "+msgObj.getDestino()+" :";
-          printLcd("[Enviando] ",1,true,0,30);
-          printLcd(msg,1,false,0,40);
+        //if(msgObj.getOp() != 1){
           //Send LoRa packet to receiver
           LoRa.beginPacket();
           LoRa.print(msg);
           LoRa.endPacket();
-        }
+          
+          printLcd("[Enviando] ",1,true,0,30);
+          printLcd(msg,1,false,0,40);
+        //}
         
         //client.write(msg,len);//echo
         delete[] msg;
@@ -203,7 +204,6 @@ void loop() {
         }
         
         //Deserializar y si es para mi, lo pinto y reenvio al dispositivo
-        if(jsonFlag)
           deserializeObject(msgLoraStr);
           if(msgObj.getDestino() == userName || msgObj.getOp()==3 || msgObj.getOp()==4){
             Serial.println("Es para ti este mensaje");
@@ -214,10 +214,10 @@ void loop() {
             msgLoraStr=msgLoraStr+"\n";
             msgLora = const_cast<char*>(msgLoraStr.c_str());
             //lcdMsg = "[Recibido] De "+msgObj.getOrigen()+" : ";
+            
+            client.print(msgLora);
             printLcd("[Recibido] ",1,true,0,30);
             printLcd(msgLora,1,false,0,40);
-    
-            client.print(msgLora);
         }
       }
 
