@@ -41,7 +41,7 @@ QRCode qrcode;                  // Create the QR code
 #define BAND 866E6
 
 // Set these to your desired credentials.
-char *ssid = "AP";
+char *ssid = "AP2";
 const char *password = "yaco123456789";
 String qr="";
 String userName = "";
