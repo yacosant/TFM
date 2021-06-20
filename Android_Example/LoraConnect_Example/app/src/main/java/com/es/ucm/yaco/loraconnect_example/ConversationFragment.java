@@ -27,6 +27,7 @@ public class ConversationFragment extends Fragment {
     EditText msg;
     Button enviar;
     static MsgInChatAdapter adapter;
+    boolean testing =false;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -56,6 +57,10 @@ public class ConversationFragment extends Fragment {
         adapter = new MsgInChatAdapter(getActivity().getApplicationContext(),chat.getMsgs());
         listViewMessages.setAdapter(adapter);
         msg.setActivated(chat.isOnline());
+
+        if(LoraConnect.isTest())
+            msg.setHint("Formato TEST: 'tiempo;frec'");
+
         enviar.setActivated(chat.isOnline());
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +69,11 @@ public class ConversationFragment extends Fragment {
                 Message message;
                 if(!text.isEmpty()){
                     msg.getText().clear();
-                    message = LoraConnect.sendMessage(chat.getDestination(),text);
+                    if(LoraConnect.isTest()) {
+                        message = LoraConnect.makeTest(chat.getDestination(), text);
+
+                    }else
+                        message = LoraConnect.sendMessage(chat.getDestination(),text);
                     MainActivity.getChatController().addMsg(message);
                     refreshChat();
                 }

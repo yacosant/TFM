@@ -23,7 +23,7 @@ public class ControllerChat {
         comparator = new Comparator<Chat>(){
             @Override
             public int compare(Chat o1, Chat o2) {
-                return o2.getLastMsg().getTimestamp().compareTo(o1.getLastMsg().getTimestamp());
+                return o2.getLastMsg().getTimestamp() > o1.getLastMsg().getTimestamp() ? 1 : 0;
             }
         };
     }

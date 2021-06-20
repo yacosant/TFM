@@ -21,7 +21,7 @@ public class ConfigActivity extends AppCompatActivity {
         Switch switchTest = (Switch)findViewById(R.id.switch_modeTest);
         TextView username = (TextView) findViewById(R.id.editTextconfigUsername);
         username.setText(LoraConnect.getUsername());
-        //switchGps.setChecked(LoraConnect.isSendGps());
+        switchTest.setChecked(LoraConnect.isTest());
         Button button_ConfigGuardar = (Button) findViewById(R.id.button_ConfigGuardar);
 
         switchTest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -38,7 +38,7 @@ public class ConfigActivity extends AppCompatActivity {
                 Snackbar.make(view, "Cambios guardados", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 LoraConnect.setUsername(username.getText().toString());
-                //LoraConnect.setSendGps(switchGps.isChecked());
+                LoraConnect.setTest(switchTest.isChecked());
             }
         });
 

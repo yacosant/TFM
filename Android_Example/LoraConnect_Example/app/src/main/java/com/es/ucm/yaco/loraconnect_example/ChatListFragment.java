@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.es.ucm.yaco.loraConnect.LoraConnect;
 import com.es.ucm.yaco.loraConnect.controller.ControllerTcp;
 import com.es.ucm.yaco.loraConnect.data.Message;
+import com.es.ucm.yaco.loraConnect.utils.Constants;
 import com.es.ucm.yaco.loraconnect_example.data.Chat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -122,13 +123,13 @@ public class ChatListFragment extends Fragment {
             try {
                 msg.parse(values[0]);
 
-                if(msg.getType()==0) //Mensaje
+                if(msg.getType()== Constants.TYPE_MSG_MSG || msg.getType()== Constants.TYPE_MSG_TEST) //Mensaje
                     addMessage(msg);
-                else if(msg.getType()==3) { //Hello
+                else if(msg.getType()== Constants.TYPE_MSG_HELLO || msg.getType()== Constants.TYPE_MSG_HELLO_ACK) { //Hello
                     if(MainActivity.getChatController().getChat(msg.getSource())!=null)
                         MainActivity.getChatController().getChat(msg.getSource()).setOnline(true);
                 }
-                else if(msg.getType()==4) { //Bye
+                else if(msg.getType()== Constants.TYPE_MSG_BYE) { //Bye
                     if(MainActivity.getChatController().getChat(msg.getSource())!=null)
                         MainActivity.getChatController().getChat(msg.getSource()).setOnline(false);
                 }
