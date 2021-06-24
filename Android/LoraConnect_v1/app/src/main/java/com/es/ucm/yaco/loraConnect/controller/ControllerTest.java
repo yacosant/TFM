@@ -58,10 +58,8 @@ public class ControllerTest {
         return msg;
     }
 
-    public static void reciveMsgTest(Message msg, long time){
+    public static void reciveMsgTest(Message msg){
         long dif = System.currentTimeMillis();
-        time = dif-time;
-        Log.i("TIME_PROCE", "es: " + time);
         dif-= msg.getTimestamp();
         latencias.add( new Long(dif) );
 

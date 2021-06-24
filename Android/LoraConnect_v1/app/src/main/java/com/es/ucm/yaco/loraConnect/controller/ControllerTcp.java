@@ -65,7 +65,6 @@ public class ControllerTcp {
      * Proceso que se inicia para realizar y gestionar la conexión con la ESP32
      */
     public void run() {
-        long t=0;
         connected = true;
 
         try {
@@ -93,7 +92,6 @@ public class ControllerTcp {
                     msg_string = mBufferIn.readLine();
                     try{
                         if (msg_string != null && mMessageListener != null) {
-                            t = System.currentTimeMillis();
                             Log.d("TCP", "MSG recibido: " + msg_string);
                             msg = new Message();
                             msg.parse(msg_string);
@@ -120,7 +118,7 @@ public class ControllerTcp {
                             }
 
                             if(msg.getType()== Constants.TYPE_MSG_TEST)
-                                ControllerTest.reciveMsgTest(msg,t);
+                                ControllerTest.reciveMsgTest(msg);
 
                             //Se notifica a la Activity que se ha recibido un mensaje
                             mMessageListener.messageReceived(msg);

@@ -11,7 +11,6 @@ public final class Constants {
     public static String json_message = "msg";
 
     public static final short TYPE_MSG_MSG = 0;
-    public static final short TYPE_MSG_CONFIG = 1;
     public static final short TYPE_MSG_TEST = 1;
     public static final short TYPE_MSG_HELLO_ACK = 2;
     public static final short TYPE_MSG_HELLO = 3;
