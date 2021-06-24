@@ -15,8 +15,8 @@ import com.es.ucm.yaco.loraconnect_example.data.Chat;
 import java.util.ArrayList;
 
 public class ChatListAdapter extends BaseAdapter {
-    Context context;
-    ArrayList<Chat> list;
+    private Context context;
+    private ArrayList<Chat> list;
 
     public ChatListAdapter(Context context, ArrayList<Chat> list) {
         this.context = context;

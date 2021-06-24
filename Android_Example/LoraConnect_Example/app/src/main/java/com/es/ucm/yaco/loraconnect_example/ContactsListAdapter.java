@@ -11,8 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ContactsListAdapter extends BaseAdapter {
-    Context context;
-    ArrayList<String> list;
+    private Context context;
+    private ArrayList<String> list;
 
     public ContactsListAdapter(Context context, ArrayList<String> list) {
         this.context = context;

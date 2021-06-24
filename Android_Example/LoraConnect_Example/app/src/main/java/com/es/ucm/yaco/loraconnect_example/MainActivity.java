@@ -2,10 +2,12 @@ package com.es.ucm.yaco.loraconnect_example;
 
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.es.ucm.yaco.loraConnect.LoraConnect;
@@ -22,7 +24,7 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity {
-    public static MainActivity mA;
+    private static MainActivity mA;
     private static ControllerChat controllerChat = new ControllerChat();
     private static boolean back = false;
     private static boolean back2 = false;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         mA = this;
     }
-@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 (NotificationManager) mA.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // === Removed some obsoletes
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             String channelId = "Your_channel_id";
             NotificationChannel channel = new NotificationChannel(
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     NotificationManager.IMPORTANCE_HIGH);
             mNotificationManager.createNotificationChannel(channel);
             mBuilder.setChannelId(channelId);
-        }*/
+        }
 
         mNotificationManager.notify(0, mBuilder.build());
     }

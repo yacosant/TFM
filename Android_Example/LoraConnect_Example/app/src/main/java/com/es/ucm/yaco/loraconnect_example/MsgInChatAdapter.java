@@ -13,8 +13,8 @@ import com.es.ucm.yaco.loraConnect.data.Message;
 import java.util.ArrayList;
 
 public class MsgInChatAdapter extends BaseAdapter {
-    Context context;
-    ArrayList<Message> list;
+    private Context context;
+    private ArrayList<Message> list;
 
     public MsgInChatAdapter(Context context, ArrayList<Message> list) {
         this.context = context;

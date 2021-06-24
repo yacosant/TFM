@@ -51,10 +51,4 @@ public class ContactListFragment extends Fragment {
         return view;
     }
 
-    private ArrayList<String> getFakeData(){
-        l = new ArrayList<String>();
-        for(int i=0; i<5; i++)
-            l.add("Contacto"+i);
-        return l;
-    }
 }

@@ -18,21 +18,20 @@ import com.es.ucm.yaco.loraconnect_example.data.Chat;
 
 
 public class ConversationFragment extends Fragment {
-    //private static int pos;
     private static String dest;
-    ListView listViewMessages;
-    TextView nombreChat;
-    ImageView img;
     private static Chat chat;
-    EditText msg;
-    Button enviar;
-    static MsgInChatAdapter adapter;
-    boolean testing =false;
+    private static MsgInChatAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+        ListView listViewMessages;
+        TextView nombreChat;
+        ImageView img;
+        EditText msg;
+        Button enviar;
+
         MainActivity.setBack(true);
         View view = inflater.inflate(R.layout.fragment_conversation, container, false);
         nombreChat = (TextView)view.findViewById(R.id.card_Nombre_chat);

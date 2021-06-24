@@ -24,9 +24,9 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 public class ChatListFragment extends Fragment {
-    ListView listViewChats;
-    static ArrayList<Chat> l = new ArrayList<Chat>();
-    static ChatListAdapter adapter;
+    private ListView listViewChats;
+    private static ArrayList<Chat> l = new ArrayList<Chat>();
+    private static ChatListAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -67,28 +67,6 @@ public class ChatListFragment extends Fragment {
         });
 
         return view;
-    }
-
-
-    protected static ArrayList<Chat> getFakeData(){
-        l= new ArrayList<Chat>();
-        Chat c;
-        Message m;
-        for(int i=0; i<3; i++){
-            c =  new Chat("pepe"+i);
-            for (int j=0; j<10;j++){
-                m = new Message();
-                if(j%2==0)
-                    m.setDestination("pepe0");
-                else
-                    m.setDestination("pepe"+j);
-                m.setMsg("Prueba"+50+j);
-                c.addMsg(m);
-            }
-            c.setOnline(i%2==0);
-            l.add(c);
-        }
-        return MainActivity.getMainAct().getChatController().getChats();
     }
 
     public static void addMessage(Message msg){
