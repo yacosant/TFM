@@ -121,12 +121,8 @@ void setup_Lora() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  //printLcd("LISTO!",2);
-  //printLcd("LISfssfTO!",2);
-  //printLcd("",2);
   
-  //printLcd((char *)WiFi.gatewayIP().toString().c_str(),1, false, 0, 30);
+  
   WiFiClient client = server.available();   // listen for incoming clients
   char *msg_log = "";
   char *msg;
@@ -147,54 +143,6 @@ void loop() {
       lenLora = LoRa.parsePacket();
       len= client.available();
       
-      if (len!=0) {//Msg recibido por WIFI
-        msg = new char[len+1];
-               
-        client.readBytes(msg, len);
-        
-        Serial.println("[TCP][IN] Mensaje:");
-        Serial.print(msg);
-        deserializeObject(String(msg));
-
-        if(msgObj.getOp() == 3){//Hello
-          userName=msgObj.getOrigen();
-         }
-       /* if(msgObj.getOp() == 1){// msg configuracion
-          Serial.println("MSG de configuracion");
-        }
-         else if(msgObj.getOp() == 0){ //msg normal
-          Serial.println("MSG de msg");
-         }
-         else if(msgObj.getOp() == 2){//ack - no usado
-          Serial.println("MSG de ACK");
-         }
-         else if(msgObj.getOp() == 3){//Hello
-          Serial.println("MSG de Hello");
-          userName=msgObj.getOrigen();
-         }
-         else if(msgObj.getOp() == 4){//Bye
-          Serial.println("MSG de Bye");
-         }*/
-         
-        /* 
-        printLcd("[TCP] Recibido: ",1,true,0,30);
-        printLcd(msg,1,false,0,40);
-        */
-        
-        //if(msgObj.getOp() != 1){
-          //Send LoRa packet to receiver
-          LoRa.beginPacket();
-          LoRa.print(msg);
-          LoRa.endPacket();
-          
-          printLcd("[Enviando] ",1,true,0,30);
-          printLcd(msg,1,false,0,40);
-        //}
-        
-        //client.write(msg,len);//echo
-        delete[] msg;
-
-      }//Fin if mensaje recibido
       if (userName!="" && lenLora!=0) {//Msg recibido por LORA
         Serial.println("[LORA][IN] Mensaje:");
 
@@ -219,8 +167,32 @@ void loop() {
             printLcd("[Recibido] ",1,true,0,30);
             printLcd(msgLora,1,false,0,40);
         }
-      }
+      }//Fin msg recibido LoRa
 
+     if (len!=0) {//Msg recibido por WIFI
+        msg = new char[len+1];
+               
+        client.readBytes(msg, len);
+        
+        Serial.println("[TCP][IN] Mensaje:");
+        Serial.print(msg);
+        deserializeObject(String(msg));
+
+        if(msgObj.getOp() == 3){//Hello
+          userName=msgObj.getOrigen();
+         }
+
+          //Send LoRa packet to receiver
+          LoRa.beginPacket();
+          LoRa.print(msg);
+          LoRa.endPacket();
+          
+          printLcd("[Enviando] ",1,true,0,30);
+          printLcd(msg,1,false,0,40);
+     
+        delete[] msg;
+
+      }//Fin if mensaje recibido
       
     }//Fin while cliente conectado
     client.stop(); // close the connection
@@ -286,7 +258,7 @@ void drawQR(){
 }
 
 void deserializeObject(String json){
-    //json = "{\"op\":0,\"o\":\"yaco\",\"d\":\"destino1\",\"msg\":\"mensajePrueba\"}";
+    
     StaticJsonDocument<300> doc;
     DeserializationError error = deserializeJson(doc, json);
     if (error) { return; }
